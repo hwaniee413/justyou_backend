@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="myshop.backend.mapper.EmpMapper">
+
+    <!-- resultMap 정의 -->
+    <resultMap id="empWithDeptMap" type="Emp">
+        <id column="empno" property="empno" />
+        <result column="name" property="name" />
+        <result column="mobile" property="mobile" />
+        <result column="emprank" property="emprank" />
+        <result column="rdate" property="rdate" />
+        <result column="sal" property="sal" />
+        <result column="comm" property="comm" />
+        <result column="deptno" property="deptno" />
+        <result column="empnumber" property="empnumber" />
+        <result column="vacation_total" property="vacation_total" />
+        <result column="vacation_used" property="vacation_used" />
+        <result column="annual_total" property="annual_total" />
+        <result column="annual_used" property="annual_used" />
+        <result column="password" property="password" />
+        <result column="email" property="email" />
+        <association property="dept" javaType="Dept">
+            <result column="deptno" property="deptno" />
+            <result column="deptname" property="deptname" />
+        </association>
+    </resultMap>
+    <!-- select 쿼리 -->
+    <select id="selectEmpWithDept" resultMap="empWithDeptMap">
+        SELECT
+            e.EMPNO,
+            e.NAME,
+            e.MOBILE,
+            e.EMPRANK,
+            d.DEPTNAME,
+            e.RDATE,
+            e.SAL,
+            e.COMM,
+            e.EMAIL
+        FROM EMP e
+        INNER JOIN DEPT d
+        ON e.DEPTNO=d.DEPTNO
+        ORDER BY d.DEPTNO, e.EMPNO
+    </select>
+    <select id="selectEmpWithDeptByEmpRank" resultMap="empWithDeptMap" parameterType="String">
+        SELECT
+            e.EMPNO,
+            e.NAME,
+            e.MOBILE,
+            e.EMPRANK,
+            d.DEPTNAME,
+            e.RDATE,
+            e.SAL,
+            e.COMM,
+            e.EMAIL
+        FROM EMP e
+        INNER JOIN DEPT d ON
+            e.DEPTNO=d.DEPTNO
+        WHERE e.EMPRANK=#{emprank}
+        ORDER BY d.DEPTNO, e.EMPNO
+    </select>
+    <select id="selectEmpWithDeptByDeptnameAndEmprank" resultMap="empWithDeptMap" parameterType="String">
+        SELECT
+            e.EMPNO,
+            e.NAME,
+            e.MOBILE,
+            e.EMPRANK,
+            d.DEPTNAME,
+            e.RDATE,
+            e.SAL,
+            e.COMM,
+            e.EMAIL
+        FROM EMP e
+        INNER JOIN DEPT d ON
+            e.DEPTNO=d.DEPTNO
+        WHERE d.DEPTNAME=#{deptname} and e.EMPRANK=#{emprank}
+        ORDER BY d.DEPTNO, e.EMPNO
+    </select>
+    <select id="getTotalCount" resultType="long">
+        SELECT
+            count(EMPNO)
+        FROM EMP
+    </select>
+    <select id="getTotalCountByDept" resultType="long" parameterType="String">
+        SELECT
+            count(e.EMPNO)
+        FROM EMP e
+        INNER JOIN DEPT d ON
+            e.DEPTNO=d.DEPTNO
+        WHERE d.DEPTNAME=#{deptname}
+    </select>
+    <select id="getEmpInfoByEmpnumber" resultMap="empWithDeptMap" parameterType="long">
+        SELECT
+            e.EMPNO,
+            e.NAME,
+            e.MOBILE,
+            e.EMPRANK,
+            d.DEPTNAME,
+            e.RDATE,
+            e.SAL,
+            e.COMM,
+            e.EMPNUMBER,
+            e.VACATION_TOTAL,
+            e.VACATION_USED,
+            e.ANNUAL_TOTAL,
+            e.ANNUAL_USED,
+            e.PASSWORD,
+            e.EMAIL
+        FROM EMP e
+        INNER JOIN DEPT d ON
+        e.DEPTNO=d.DEPTNO
+        WHERE e.EMPNUMBER=#{empnumber}
+
+    </select>
+    <select id="getEmpInfoByEmpname" resultMap="empWithDeptMap" parameterType="String">
+        SELECT
+            e.EMPNO,
+            e.NAME,
+            e.MOBILE,
+            e.EMPRANK,
+            d.DEPTNAME,
+            e.RDATE,
+            e.SAL,
+            e.COMM,
+            e.EMPNUMBER,
+            e.VACATION_TOTAL,
+            e.VACATION_USED,
+            e.ANNUAL_TOTAL,
+            e.ANNUAL_USED,
+            e.PASSWORD,
+            e.EMAIL
+        FROM EMP e
+        INNER JOIN DEPT d ON
+        e.DEPTNO=d.DEPTNO
+        WHERE e.NAME=#{empname}
+    </select>
+    <select id="getEmpInfoByEmpno" resultMap="empWithDeptMap" parameterType="long">
+        SELECT
+            e.EMPNO,
+            e.NAME,
+            e.MOBILE,
+            e.EMPRANK,
+            d.DEPTNAME,
+            e.RDATE,
+            e.SAL,
+            e.COMM,
+            e.EMPNUMBER,
+            e.VACATION_TOTAL,
+            e.VACATION_USED,
+            e.ANNUAL_TOTAL,
+            e.ANNUAL_USED,
+            e.PASSWORD,
+            e.EMAIL
+        FROM EMP e
+        INNER JOIN DEPT d ON
+            e.DEPTNO=d.DEPTNO
+        WHERE e.EMPNO=#{empno}
+    </select>
+    <select id="getEmpInfoByEmail" resultMap="empWithDeptMap" parameterType="String">
+        SELECT
+        e.EMPNO,
+        e.NAME,
+        e.MOBILE,
+        e.EMPRANK,
+        d.DEPTNAME,
+        e.RDATE,
+        e.SAL,
+        e.COMM,
+        e.EMPNUMBER,
+        e.VACATION_TOTAL,
+        e.VACATION_USED,
+        e.ANNUAL_TOTAL,
+        e.ANNUAL_USED,
+        e.PASSWORD,
+        e.EMAIL
+        FROM EMP e
+        INNER JOIN DEPT d ON
+        e.DEPTNO=d.DEPTNO
+        WHERE e.EMAIL=#{email}
+    </select>
+    <insert id="insert" parameterType="Emp">
+        <selectKey keyProperty="empno" order="BEFORE" resultType="long">
+            select EMP_SEQ.nextval from dual
+        </selectKey>
+        INSERT INTO
+            EMP
+        VALUES(
+            #{empno}, #{name},
+            #{mobile}, #{emprank},
+            #{rdate}, #{sal},
+            #{comm}, #{empnumber},
+            #{vacation_total}, 0,
+            #{annual_total}, 0,
+            #{deptno},
+            #{password},
+            #{email}
+        )
+    </insert>
+    <update id="updateMobile" parameterType="Emp">
+        UPDATE
+            EMP
+        SET
+            mobile=#{mobile}
+        WHERE
+            EMPNO=#{empno}
+    </update>
+    <update id="updatePassword" parameterType="Emp">
+        UPDATE
+            EMP
+        SET
+            password=#{password}
+        WHERE
+            EMPNO=#{empno}
+    </update>
+</mapper>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="myshop.backend.mapper.ProductMapper">
+
+    <!-- resultMap 정의 -->
+    <resultMap id="productWithFilesMap" type="Product">
+        <id column="pid" property="pid" />
+        <result column="title" property="title" />
+        <result column="description" property="description" />
+        <result column="retail" property="retail" />
+        <result column="sale" property="sale" />
+        <result column="category" property="category" />
+        <result column="status" property="status" />
+        <result column="event" property="event" />
+        <result column="quantity" property="quantity" />
+        <result column="rdate" property="rdate" />
+        <result column="udate" property="udate" />
+        <result column="start_at" property="start_at" />
+        <result column="end_at" property="end_at" />
+        <result property="pageNum" column="pageNum" />
+        <result property="pageSize" column="pageSize" />
+        <result property="startRow" column="startRow" />
+        <result property="endRow" column="endRow" />
+        <result property="totalCount" column="totalCount" />
+        <result property="totalPageCount" column="totalPageCount" />
+        <association property="product_files" javaType="Product_files">
+            <result column="fid" property="fid" />
+            <result column="fname" property="fname"/>
+            <result column="ofname" property="ofname"/>
+            <result column="savedpath" property="savedpath"/>
+            <result column="pid" property="pid"/>
+        </association>
+
+    </resultMap>
+
+    <!-- select 쿼리 -->
+    <select id="selectAllWithPaging" resultType="Product" parameterType="myshop.backend.dto.ProductsPagingDto">
+        SELECT
+            *
+        FROM PRODUCT
+        ORDER BY UDATE DESC, PID desc
+        OFFSET ((#{pageNum} - 1) * #{pageSize}) ROWS
+        FETCH NEXT #{pageSize} ROWS ONLY
+    </select>
+    <select id="selectProductByPid" resultType="Product" parameterType="long">
+        SELECT *
+        FROM PRODUCT
+        WHERE PID=#{pid}
+    </select>
+    <select id="countProductsId" resultType="int">
+        SELECT
+            count(pid)
+        FROM
+            PRODUCT
+    </select>
+
+    <select id="countProductIdByTitleContaining" resultType="int">
+        SELECT
+            count(pid)
+        FROM
+            PRODUCT
+        WHERE
+            TITLE LIKE  '%' ||  #{kw} || '%'
+    </select>
+    <select id="selectAllWithPagingByTitle" resultType="Product">
+        SELECT
+            *
+        FROM
+            PRODUCT
+        WHERE
+            TITLE LIKE  '%' ||  #{kw} || '%'
+        ORDER BY UDATE DESC, PID desc
+        OFFSET ((#{pagingDto.pageNum} - 1) * #{pagingDto.pageSize}) ROWS
+        FETCH NEXT #{pagingDto.pageSize} ROWS ONLY
+    </select>
+
+    <select id="countProductIdByCategoryContaining" resultType="int">
+        SELECT
+        count(pid)
+        FROM
+        PRODUCT
+        WHERE
+        CATEGORY LIKE  '%' ||  #{kw} || '%'
+    </select>
+    <select id="selectAllWithPagingByCategory" resultType="Product">
+        SELECT
+        *
+        FROM
+        PRODUCT
+        WHERE
+        CATEGORY LIKE  '%' ||  #{kw} || '%'
+        ORDER BY UDATE DESC, PID desc
+        OFFSET ((#{pagingDto.pageNum} - 1) * #{pagingDto.pageSize}) ROWS
+        FETCH NEXT #{pagingDto.pageSize} ROWS ONLY
+    </select>
+
+    <select id="countProductIdByStatusContaining" resultType="int">
+        SELECT
+        count(pid)
+        FROM
+        PRODUCT
+        WHERE
+        STATUS LIKE  '%' ||  #{kw} || '%'
+    </select>
+    <select id="selectAllWithPagingByStatus" resultType="Product">
+        SELECT
+        *
+        FROM
+        PRODUCT
+        WHERE
+        STATUS LIKE  '%' ||  #{kw} || '%'
+        ORDER BY UDATE DESC, PID desc
+        OFFSET ((#{pagingDto.pageNum} - 1) * #{pagingDto.pageSize}) ROWS
+        FETCH NEXT #{pagingDto.pageSize} ROWS ONLY
+    </select>
+
+    <select id="countProductIdByEventContaining" resultType="int">
+        SELECT
+        count(pid)
+        FROM
+        PRODUCT
+        WHERE
+        EVENT LIKE  '%' ||  #{kw} || '%'
+    </select>
+    <select id="selectAllWithPagingByEvent" resultType="Product">
+        SELECT
+        *
+        FROM
+        PRODUCT
+        WHERE
+        EVENT LIKE  '%' ||  #{kw} || '%'
+        ORDER BY UDATE DESC, PID desc
+        OFFSET ((#{pagingDto.pageNum} - 1) * #{pagingDto.pageSize}) ROWS
+        FETCH NEXT #{pagingDto.pageSize} ROWS ONLY
+    </select>
+
+    <insert id="insert"  parameterType="Product">
+        <selectKey keyProperty="pid" order="BEFORE" resultType="long">
+            select PRODUCT_SEQ.nextval from dual
+        </selectKey>
+        INSERT INTO
+            PRODUCT
+        VALUES(
+            #{pid},
+            #{title},
+            #{description},
+            #{retail},
+            #{sale},
+            #{category},
+            #{status},
+            #{event},
+            #{quantity},
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP,
+            #{start_at},
+            #{end_at}
+            )
+    </insert>
+    <update id="updateById" parameterType="Product">
+        UPDATE
+            PRODUCT
+        SET
+            TITLE=#{title},
+            DESCRIPTION=#{description},
+            RETAIL=#{retail},
+            SALE=#{sale},
+            CATEGORY=#{category},
+            STATUS=#{status},
+            EVENT=#{event},
+            QUANTITY=#{quantity},
+            UDATE=CURRENT_TIMESTAMP,
+            START_AT=#{start_at},
+            END_AT=#{end_at}
+        WHERE
+            PID=#{pid}
+    </update>
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM
+            PRODUCT
+        WHERE
+            PID=#{pid}
+    </delete>
+</mapper>

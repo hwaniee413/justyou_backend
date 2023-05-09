@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="myshop.backend.mapper.ScheduleMapper">
+
+    <!-- resultMap 정의 -->
+    <resultMap id="scheduleWithDeptMap" type="Schedule">
+        <id column="id" property="id" />
+        <result column="title" property="title" />
+        <result column="content" property="content" />
+        <result column="status" property="status" />
+        <result column="empname" property="empname" />
+        <result column="start_at" property="start_at" />
+        <result column="deadline" property="deadline" />
+        <result column="end_at" property="end_at" />
+        <result column="deptno" property="deptno" />
+        <association property="dept" javaType="Dept">
+            <result column="deptno" property="deptno" />
+            <result column="deptname" property="deptname" />
+        </association>
+    </resultMap>
+    <!-- select 쿼리 -->
+    <select id="selectWithDeptByDeptname" resultMap="scheduleWithDeptMap">
+        SELECT
+            s.ID,
+            s.TITLE,
+            s.CONTENT,
+            s.STATUS,
+            s.EMPNAME,
+            s.START_AT,
+            s.DEADLINE,
+            s.END_AT,
+            s.DEPTNO,
+            d.DEPTNAME
+        FROM SCHEDULE s
+        INNER JOIN DEPT d
+            ON s.DEPTNO=d.DEPTNO
+        WHERE d.DEPTNAME=#{deptname}
+        ORDER BY s.ID desc
+    </select>
+</mapper>

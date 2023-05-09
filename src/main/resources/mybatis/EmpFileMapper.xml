@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="myshop.backend.mapper.EmpFileMapper">
+
+    <!-- resultMap 정의 -->
+    <resultMap id="empFilesWithEmpMap" type="Emp_files">
+        <id column="fid" property="fid" />
+        <result column="fname" property="fname" />
+        <result column="ofname" property="ofname" />
+        <result column="savedpath" property="savedpath" />
+        <result column="empno" property="empno" />
+        <association property="emp" javaType="Emp">
+            <result column="empno" property="empno" />
+            <result column="name" property="name" />
+            <result column="empnumber" property="empnumber" />
+        </association>
+    </resultMap>
+    <!-- select 쿼리 -->
+    <select id="selectEmpFilesByEmpno" resultMap="empFilesWithEmpMap" parameterType="long">
+        SELECT
+            f.fid,
+            f.fname,
+            f.ofname,
+            f.savedpath,
+            e.empno,
+            e.name,
+            e.empnumber
+        FROM EMP_FILES f
+        INNER JOIN EMP e
+        ON f.EMPNO=e.EMPNO
+        WHERE e.empno=#{empno}
+        ORDER BY f.fid desc
+    </select>
+    <insert id="insert" parameterType="Emp_files">
+        <selectKey keyProperty="fid" order="BEFORE" resultType="long">
+            select EMP_FILES_SEQ.nextval from dual
+        </selectKey>
+        INSERT INTO
+            EMP_FILES
+        VALUES(#{fid}, #{fname}, #{ofname}, #{savedpath}, #{empno})
+    </insert>
+    <update id="update" parameterType="Emp_files">
+        UPDATE
+            EMP_FILES
+        SET
+            FNAME=#{fname},
+            OFNAME=#{ofname},
+            SAVEDPATH=#{savedpath}
+        WHERE
+            EMPNO=#{empno}
+    </update>
+</mapper>

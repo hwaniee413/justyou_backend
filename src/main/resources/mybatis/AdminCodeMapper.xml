@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="myshop.backend.mapper.AdminCodeMapper">
+    <!-- select 쿼리 -->
+    <select id="getAdminCode" resultType="Admincode" parameterType="long">
+        SELECT
+            *
+        from
+            admincode
+        where
+            id=#{id}
+    </select>
+</mapper>

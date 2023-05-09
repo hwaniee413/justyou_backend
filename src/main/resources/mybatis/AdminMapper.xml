@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="myshop.backend.mapper.AdminMapper">
+    <!-- select 쿼리 -->
+    <select id="getAdminbyId" resultType="Admin" parameterType="long">
+        select admin_num, admin_id, admin_name, rdate, udate from ADMIN where admin_num=#{admin_num}
+    </select>
+    <select id="getAdminByEmailId" resultType="Admin" parameterType="String">
+        select * from ADMIN where admin_id=#{admin_id}
+    </select>
+    <select id="getAdminByPassword" resultType="Admin" parameterType="String">
+        select * from ADMIN where admin_pwd=#{admin_pwd}
+    </select>
+    <insert id="signUp" parameterType="Admin">
+        <selectKey keyProperty="admin_num" order="BEFORE" resultType="long">
+            select ADMIN_SEQ.nextval from dual
+        </selectKey>
+        insert into ADMIN values(#{admin_num}, #{admin_id}, #{admin_pwd}, #{admin_name}, current_timestamp, current_timestamp, #{admin_code})
+    </insert>
+</mapper>
